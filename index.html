@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>Quiz : Bilan et Comptabilité Financière</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "Qu'est-ce que le capital social d'une entreprise ?", choices: ["La somme des profits réalisés par l'entreprise", "L'argent apporté par les actionnaires lors de la création ou de l'émission d'actions", "Le montant des dettes de l'entreprise", "Le montant des bénéfices non distribués"], correct: 1 },
+        { question: "Que représentent les actions dans une entreprise ?", choices: ["Des obligations de paiement à long terme", "Des certificats de propriété représentant une part du capital de l'entreprise", "Des parts des bénéfices futurs uniquement", "Des contrats de crédit avec les banques"], correct: 1 },
+        { question: "Quelle est la différence entre la valeur nominale et la valeur de marché d'une action ?", choices: ["La valeur nominale est utilisée pour les dividendes, la valeur de marché pour les investissements", "La valeur nominale est fixée à l'émission, la valeur de marché fluctue selon l'offre et la demande", "La valeur de marché est fixe, la valeur nominale fluctue", "La valeur nominale dépend des performances de l'entreprise"], correct: 1 },
+        { question: "Qu'est-ce qu'une 'prime d'émission' dans le cadre d'une augmentation de capital ?", choices: ["La différence entre le prix de vente des actions et leur valeur nominale", "Le montant des dividendes versés aux actionnaires", "La valeur des actions après déduction des coûts", "Le prix payé par l'entreprise pour racheter ses actions"], correct: 0 },
+        { question: "Que se passe-t-il lors d'un rachat d'actions par l'entreprise ?", choices: ["Les actions sont supprimées du capital social", "Les actions sont revendues immédiatement sur le marché", "Le capital social augmente", "Les actions peuvent être utilisées pour récompenser les employés"], correct: 3 },
+        { question: "Qu'est-ce que l'annulation d'actions signifie pour le capital social d'une entreprise ?", choices: ["Le capital social diminue", "Le capital social augmente", "Le capital social reste inchangé", "Les actions sont revendues à un prix supérieur"], correct: 0 },
+        { question: "Que représente le 'besoin en fonds de roulement' (BFR) pour une entreprise ?", choices: ["La capacité de l'entreprise à rembourser ses dettes à long terme", "La différence entre les actifs circulants et les dettes courantes", "Le montant des réserves accumulées par l'entreprise", "Le montant total des capitaux propres"], correct: 1 },
+        { question: "Que signifie un BFR (Besoin en Fonds de Roulement) négatif ?", choices: ["L'entreprise a besoin de financement supplémentaire", "L'entreprise possède plus de liquidités que nécessaire pour couvrir ses dettes à court terme", "L'entreprise est en faillite", "L'entreprise doit augmenter son capital social"], correct: 1 },
+        { question: "Qu'est-ce qu'une dette à long terme pour une entreprise ?", choices: ["Une dette remboursable en moins d'un an", "Une dette remboursable sur plusieurs années", "Un prêt accordé par les actionnaires", "Une obligation légale de distribuer des dividendes"], correct: 1 },
+        { question: "Que signifie une 'obligation de remboursement' pour les créanciers d'une entreprise ?", choices: ["Les créanciers doivent verser des dividendes aux actionnaires", "L'entreprise doit rembourser les créanciers selon les modalités convenues", "Les créanciers n'ont aucun droit de remboursement", "L'entreprise peut rembourser ses dettes à sa convenance"], correct: 1 },
+        { question: "Quel est l'effet d'une augmentation des dettes sur le risque de faillite d'une entreprise ?", choices: ["Le risque de faillite diminue", "Le risque de faillite reste stable", "Le risque de faillite augmente", "Le risque de faillite n'est pas affecté par les dettes"], correct: 2 },
+        { question: "Quelle est la formule du calcul de l'annuité d'un emprunt ?", choices: ["a = T × C", "a = (T × C) / (1 - (1 + T)^-n)", "a = T + C", "a = C / T"], correct: 1 },
+        { question: "Qu'est-ce qu'un 'emprunt in fine' ?", choices: ["Un emprunt où les intérêts et le capital sont remboursés chaque année", "Un emprunt où seul le capital est remboursé à la fin du contrat, les intérêts étant payés annuellement", "Un emprunt sans aucun paiement d'intérêts", "Un emprunt où le montant total est remboursé annuellement"], correct: 1 },
+        { question: "Que signifie la flexibilité des dettes pour une entreprise ?", choices: ["Les dettes peuvent être modifiées facilement en fonction des besoins de l'entreprise", "Les dettes n'ont aucun impact sur le flux de trésorerie", "Les créanciers peuvent décider des modalités de remboursement", "Les dettes ne doivent jamais être remboursées"], correct: 0 },
+        { question: "Pourquoi le ratio d'endettement est-il important pour une entreprise ?", choices: ["Il détermine le montant des dividendes à distribuer", "Il indique la proportion de financement par emprunt par rapport aux capitaux propres", "Il mesure les bénéfices futurs de l'entreprise", "Il fixe la valeur des actions sur le marché"], correct: 1 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+</html>
